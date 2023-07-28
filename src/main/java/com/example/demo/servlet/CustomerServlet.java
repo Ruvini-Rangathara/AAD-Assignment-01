@@ -15,6 +15,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 @WebServlet(urlPatterns = "/customer")
 public class CustomerServlet extends HttpServlet {
@@ -26,9 +27,64 @@ public class CustomerServlet extends HttpServlet {
     }
 
 
+    private boolean isValidCustomer(CustomerDTO customerDTO){
+        // Perform validation checks
+        if (!isValidCustomerId(customerDTO.getId())) {
+            System.out.println("Invalid customer ID");
+        } else if (customerDTO.getName() == null || customerDTO.getName().isEmpty()) {
+            System.out.println("Name cannot be empty");
+        } else if (customerDTO.getAddress() == null || customerDTO.getAddress().isEmpty()) {
+            System.out.println("Address cannot be empty");
+        } else if (customerDTO.getSalary() < 0) {
+            System.out.println("Salary cannot be negative");
+        } else {
+            return true;
+        }
+        return false;
+    }
+
+    // Validate the customer ID
+    private boolean isValidCustomerId(String id) {
+        // Check if the ID is not null and has exactly 4 characters
+        if (id == null || id.length() != 4) {
+            return false;
+        }
+
+        // Check if the ID starts with a capital "C"
+        if (!id.startsWith("C")) {
+            return false;
+        }
+
+        // Check if the rest of the characters are numeric
+        for (int i = 1; i < id.length(); i++) {
+            if (!Character.isDigit(id.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        super.doGet(req, resp);
+        Jsonb jsonb = JsonbBuilder.create();
+//        CustomerDTO customerDTO = new CustomerDTO("C001", "John Doe", "123 Main St", 50000.0);
+
+        String customerId = req.getParameter("id");
+        System.out.println("Customer Id from frontend : "+customerId);
+        CustomerDTO customerDTO = customerService.search("C001");
+
+        // Serialize the CustomerDTO object to JSON
+        String json = jsonb.toJson(customerDTO);
+
+        // Set the content type to indicate JSON data
+        resp.setContentType("application/json");
+
+        // Write the JSON data to the response output stream
+        try (PrintWriter out = resp.getWriter()) {
+            out.print(json);
+        }
     }
 
     @Override
@@ -36,22 +92,46 @@ public class CustomerServlet extends HttpServlet {
         Jsonb jsonb = JsonbBuilder.create();
         CustomerDTO customerDTO = jsonb.fromJson(req.getReader(), CustomerDTO.class);
 
-        if(customerService.save(customerDTO)){
-            System.out.println("Saved");
-        }else{
-            System.out.println("Note Saved");
+        if(isValidCustomer(customerDTO)){
+            // If all validations pass, save the customer
+            if (customerService.save(customerDTO)) {
+                System.out.println("Saved");
+            } else {
+                System.out.println("Not Saved");
+            }
         }
-
-
     }
+
+
 
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        super.doPut(req, resp);
+        Jsonb jsonb = JsonbBuilder.create();
+        CustomerDTO customerDTO = jsonb.fromJson(req.getReader(), CustomerDTO.class);
+
+        if(isValidCustomer(customerDTO)){
+            // If all validations pass, update the customer
+            if (customerService.update(customerDTO)) {
+                System.out.println("Updated");
+            } else {
+                System.out.println("Not Updated");
+            }
+        }
+
     }
 
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        super.doDelete(req, resp);
+        Jsonb jsonb = JsonbBuilder.create();
+        CustomerDTO customerDTO = jsonb.fromJson(req.getReader(), CustomerDTO.class);
+
+        if(isValidCustomer(customerDTO)){
+            // If all validations pass, delete the customer
+            if (customerService.delete(customerDTO)) {
+                System.out.println("Deleted");
+            } else {
+                System.out.println("Not Deleted");
+            }
+        }
     }
 }
