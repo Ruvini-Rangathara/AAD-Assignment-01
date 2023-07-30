@@ -84,87 +84,95 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public boolean update(OrderDTO dto) {
-        Session session = FactoryConfiguration.getInstance().getSession();
-        Transaction transaction = session.beginTransaction();
-        try{
-            orderDao.update(convertor.toOrder(dto),session);
-            transaction.commit();
-            return true;
-        }catch(Exception e){
-            transaction.rollback();
-            return false;
-        }finally {
-            session.close();
-        }
+//        Session session = FactoryConfiguration.getInstance().getSession();
+//        Transaction transaction = session.beginTransaction();
+//        try{
+//            orderDao.update(convertor.toOrder(dto),session);
+//            transaction.commit();
+//            return true;
+//        }catch(Exception e){
+//            transaction.rollback();
+//            return false;
+//        }finally {
+//            session.close();
+//        }
+        return false;
     }
 
     @Override
     public boolean delete(OrderDTO dto) {
-        Session session = FactoryConfiguration.getInstance().getSession();
-        Transaction transaction = session.beginTransaction();
-        try{
-            orderDao.delete(convertor.toOrder(dto),session);
-            transaction.commit();
-            return true;
-        }catch(Exception e){
-            transaction.rollback();
-            return false;
-        }finally {
-            session.close();
-        }
+//        Session session = FactoryConfiguration.getInstance().getSession();
+//        Transaction transaction = session.beginTransaction();
+//        try{
+//            orderDao.delete(convertor.toOrder(dto),session);
+//            transaction.commit();
+//            return true;
+//        }catch(Exception e){
+//            transaction.rollback();
+//            return false;
+//        }finally {
+//            session.close();
+//        }
+
+        return false;
     }
 
     @Override
     public OrderDTO search(String id) {
-        Session session = FactoryConfiguration.getInstance().getSession();
-        Transaction transaction = session.beginTransaction();
-        try{
-            Order order = orderDao.search(id, session);
-            transaction.commit();
-            return convertor.toOrderDTO(order);
-        }catch(Exception e){
-            transaction.rollback();
-            return null;
-        }finally {
-            session.close();
-        }
+//        Session session = FactoryConfiguration.getInstance().getSession();
+//        Transaction transaction = session.beginTransaction();
+//        try{
+//            Order order = orderDao.search(id, session);
+//            transaction.commit();
+//            return convertor.toOrderDTO(order);
+//        }catch(Exception e){
+//            transaction.rollback();
+//            return null;
+//        }finally {
+//            session.close();
+//        }
+
+        return null;
     }
 
     @Override
     public List<OrderDTO> getAll() {
-        Session session = FactoryConfiguration.getInstance().getSession();
-        Transaction transaction = session.beginTransaction();
-        try{
-            List<Order> orderList = orderDao.getAll(session);
-            transaction.commit();
-
-            List<OrderDTO> list = new ArrayList<>();
-            for (Order order:orderList) {
-                list.add(convertor.toOrderDTO(order));
-            }
-
-            return list;
-        }catch(Exception e){
-            transaction.rollback();
-            return null;
-        }finally {
-            session.close();
-        }
+//        Session session = FactoryConfiguration.getInstance().getSession();
+//        Transaction transaction = session.beginTransaction();
+//        try{
+//            List<Order> orderList = orderDao.getAll(session);
+//            transaction.commit();
+//
+//            List<OrderDTO> list = new ArrayList<>();
+//            for (Order order:orderList) {
+//                list.add(convertor.toOrderDTO(order));
+//            }
+//
+//            return list;
+//        }catch(Exception e){
+//            transaction.rollback();
+//            return null;
+//        }finally {
+//            session.close();
+//        }
+        return null;
     }
 
     @Override
     public String getLastId() {
-        Session session = FactoryConfiguration.getInstance().getSession();
-        Transaction transaction = session.beginTransaction();
-        try{
-            String lastId = orderDao.getLastId(session);
-            transaction.commit();
-            return lastId;
-        }catch(Exception e){
-            transaction.rollback();
-            return null;
-        }finally {
-            session.close();
-        }
+//        Session session = FactoryConfiguration.getInstance().getSession();
+//        Transaction transaction = session.beginTransaction();
+//        try{
+//            String lastId = orderDao.getLastId(session);
+//            transaction.commit();
+//            return lastId;
+//        }catch(Exception e){
+//            transaction.rollback();
+//            return null;
+//        }finally {
+//            session.close();
+//        }
+
+        return null;
     }
 }

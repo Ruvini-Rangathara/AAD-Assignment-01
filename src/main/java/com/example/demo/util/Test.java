@@ -17,6 +17,27 @@ public class Test {
 
     public static void main(String[] args) {
 
+
+//        {
+//            "orderId": "O001",
+//                "customerId":"C001",
+//                "date": "2023-07-29",
+//                "itemList": [
+//            {
+//                "orderId": "O001",
+//                    "itemId" : "I001",
+//                    "qty" : 3
+//            },
+//            {
+//                "orderId": "O001",
+//                    "itemId" : "I002",
+//                    "qty" : 10
+//            }
+//    	]
+//
+//        }
+
+
         try {
             session = FactoryConfiguration.getInstance().getSession();
             transaction = session.beginTransaction();
