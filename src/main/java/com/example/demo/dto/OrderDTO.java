@@ -15,7 +15,7 @@ import java.util.List;
 @ToString
 public class OrderDTO implements SuperDTO{
     private String orderId;
-    private CustomerDTO customerDTO;
+    private String customerId;
     private Date date;
-    private List<OrderDetail> itemList;
+    private List<OrderDetailDTO> itemList;
 }

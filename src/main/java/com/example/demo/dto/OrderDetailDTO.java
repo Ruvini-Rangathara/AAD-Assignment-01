@@ -10,8 +10,8 @@ import lombok.ToString;
 @Data
 @ToString
 public class OrderDetailDTO implements SuperDTO{
-    private OrderDTO orderDTO;
-    private ItemDTO itemDTO;
+    private String orderId;
+    private String itemCode;
     private int qty;
     private int id;
 

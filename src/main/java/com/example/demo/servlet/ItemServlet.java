@@ -1,7 +1,6 @@
 package com.example.demo.servlet;
 
 
-import com.example.demo.dto.CustomerDTO;
 import com.example.demo.dto.ItemDTO;
 import com.example.demo.service.ServiceFactory;
 import com.example.demo.service.ServiceType;

@@ -74,6 +74,7 @@ public class CustomerServlet extends HttpServlet {
         String customerId = req.getParameter("id");
         System.out.println("Customer Id from frontend : "+customerId);
         CustomerDTO customerDTO = customerService.search("C001");
+        System.out.println(customerDTO.toString());
 
         // Serialize the CustomerDTO object to JSON
         String json = jsonb.toJson(customerDTO);
