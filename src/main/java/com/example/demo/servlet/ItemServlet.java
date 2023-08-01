@@ -1,10 +1,13 @@
 package com.example.demo.servlet;
 
 
+import com.example.demo.dto.CustomerDTO;
 import com.example.demo.dto.ItemDTO;
 import com.example.demo.service.ServiceFactory;
 import com.example.demo.service.ServiceType;
 import com.example.demo.service.custom.ItemService;
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
 import jakarta.json.bind.Jsonb;
 import jakarta.json.bind.JsonbBuilder;
 import jakarta.servlet.ServletException;
@@ -39,22 +42,28 @@ public class ItemServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Jsonb jsonb = JsonbBuilder.create();
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        System.out.println("Get method called in item");
+        String item_code = req.getParameter("code");
+        System.out.println("Item code from frontend: " + item_code);
 
-        String customerId = req.getParameter("code");
-        System.out.println("Item from frontend : "+customerId);
-        ItemDTO itemDTO = itemService.search("I001");
+        // Assuming you have a method in your ItemService to retrieve customer data by ID
+        ItemDTO itemDTO = itemService.search(item_code);
 
-        // Serialize the ItemDTO object to JSON
-        String json = jsonb.toJson(itemDTO);
+        // Convert the itemDTO object to a JSON object
+        JsonObject itemJson = Json.createObjectBuilder()
+                .add("code", itemDTO.getCode())
+                .add("description", itemDTO.getDescription())
+                .add("unitPrice", itemDTO.getUnitPrice())
+                .add("qtyOnHand", itemDTO.getQtyOnHand())
+                .build();
 
         // Set the content type to indicate JSON data
         resp.setContentType("application/json");
 
         // Write the JSON data to the response output stream
         try (PrintWriter out = resp.getWriter()) {
-            out.print(json);
+            out.print(itemJson.toString());
         }
     }
 

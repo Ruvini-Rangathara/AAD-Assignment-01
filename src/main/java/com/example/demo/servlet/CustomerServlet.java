@@ -5,6 +5,8 @@ import com.example.demo.dto.CustomerDTO;
 import com.example.demo.service.ServiceFactory;
 import com.example.demo.service.ServiceType;
 import com.example.demo.service.custom.CustomerService;
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
 import jakarta.json.bind.Jsonb;
 import jakarta.json.bind.JsonbBuilder;
 import jakarta.servlet.ServletException;
@@ -68,30 +70,37 @@ public class CustomerServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Jsonb jsonb = JsonbBuilder.create();
-//        CustomerDTO customerDTO = new CustomerDTO("C001", "John Doe", "123 Main St", 50000.0);
-
+        System.out.println("Get method called in customer");
         String customerId = req.getParameter("id");
-        System.out.println("Customer Id from frontend : "+customerId);
-        CustomerDTO customerDTO = customerService.search("C001");
-        System.out.println(customerDTO.toString());
+        System.out.println("Customer Id from frontend: " + customerId);
 
-        // Serialize the CustomerDTO object to JSON
-        String json = jsonb.toJson(customerDTO);
+        // Assuming you have a method in your CustomerService to retrieve customer data by ID
+        CustomerDTO customerDTO = customerService.search(customerId);
+
+        // Convert the CustomerDTO object to a JSON object
+        JsonObject customerJson = Json.createObjectBuilder()
+                .add("id", customerDTO.getId())
+                .add("name", customerDTO.getName())
+                .add("address", customerDTO.getAddress())
+                .add("salary", customerDTO.getSalary())
+                .build();
 
         // Set the content type to indicate JSON data
         resp.setContentType("application/json");
 
         // Write the JSON data to the response output stream
         try (PrintWriter out = resp.getWriter()) {
-            out.print(json);
+            out.print(customerJson.toString());
         }
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        System.out.println("Post method called in customer");
         Jsonb jsonb = JsonbBuilder.create();
         CustomerDTO customerDTO = jsonb.fromJson(req.getReader(), CustomerDTO.class);
+
+        System.out.println(customerDTO.toString());
 
         if(isValidCustomer(customerDTO)){
             // If all validations pass, save the customer
@@ -103,12 +112,13 @@ public class CustomerServlet extends HttpServlet {
         }
     }
 
-
-
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        System.out.println("Put method called in customer");
         Jsonb jsonb = JsonbBuilder.create();
         CustomerDTO customerDTO = jsonb.fromJson(req.getReader(), CustomerDTO.class);
+
+        System.out.println(customerDTO.toString());
 
         if(isValidCustomer(customerDTO)){
             // If all validations pass, update the customer
@@ -118,13 +128,15 @@ public class CustomerServlet extends HttpServlet {
                 System.out.println("Not Updated");
             }
         }
-
     }
 
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        System.out.println("Delete method called in customer");
         Jsonb jsonb = JsonbBuilder.create();
         CustomerDTO customerDTO = jsonb.fromJson(req.getReader(), CustomerDTO.class);
+
+        System.out.println(customerDTO.toString());
 
         if(isValidCustomer(customerDTO)){
             // If all validations pass, delete the customer
