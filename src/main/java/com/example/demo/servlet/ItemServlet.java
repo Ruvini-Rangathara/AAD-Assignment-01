@@ -6,6 +6,7 @@ import com.example.demo.dto.ItemDTO;
 import com.example.demo.service.ServiceFactory;
 import com.example.demo.service.ServiceType;
 import com.example.demo.service.custom.ItemService;
+import com.google.gson.Gson;
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.bind.Jsonb;
@@ -18,6 +19,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 import java.util.regex.Pattern;
 
 
@@ -44,26 +46,40 @@ public class ItemServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         System.out.println("Get method called in item");
-        String item_code = req.getParameter("code");
-        System.out.println("Item code from frontend: " + item_code);
 
-        // Assuming you have a method in your ItemService to retrieve customer data by ID
-        ItemDTO itemDTO = itemService.search(item_code);
+        String itemCode = req.getParameter("code");
+        if (itemCode != null && !itemCode.isEmpty()) {
+            // Get specific item by code
+            ItemDTO itemDTO = itemService.search(itemCode);
 
-        // Convert the itemDTO object to a JSON object
-        JsonObject itemJson = Json.createObjectBuilder()
-                .add("code", itemDTO.getCode())
-                .add("description", itemDTO.getDescription())
-                .add("unitPrice", itemDTO.getUnitPrice())
-                .add("qtyOnHand", itemDTO.getQtyOnHand())
-                .build();
+            // Convert the ItemDTO object to a JSON object
+            JsonObject customerJson = Json.createObjectBuilder()
+                    .add("code", itemDTO.getCode())
+                    .add("description", itemDTO.getDescription())
+                    .add("unitPrice", itemDTO.getUnitPrice())
+                    .add("qtyOnHand", itemDTO.getQtyOnHand())
+                    .build();
 
-        // Set the content type to indicate JSON data
-        resp.setContentType("application/json");
+            // Set the content type to indicate JSON data
+            resp.setContentType("application/json");
 
-        // Write the JSON data to the response output stream
-        try (PrintWriter out = resp.getWriter()) {
-            out.print(itemJson.toString());
+            // Write the JSON data to the response output stream
+            try (PrintWriter out = resp.getWriter()) {
+                out.print(customerJson.toString());
+            }
+        } else {
+            // Get all items
+            List<ItemDTO> allItems = itemService.getAll();
+            Gson gson = new Gson();
+            String json = gson.toJson(allItems);
+
+            // Set the content type to indicate JSON data
+            resp.setContentType("application/json");
+
+            // Write the JSON data to the response output stream
+            try (PrintWriter out = resp.getWriter()) {
+                out.print(json);
+            }
         }
     }
 
