@@ -5,6 +5,7 @@ import com.example.demo.dto.CustomerDTO;
 import com.example.demo.service.ServiceFactory;
 import com.example.demo.service.ServiceType;
 import com.example.demo.service.custom.CustomerService;
+import com.google.gson.Gson;
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.bind.Jsonb;
@@ -18,6 +19,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 
 @WebServlet(urlPatterns = "/customer")
 public class CustomerServlet extends HttpServlet {
@@ -71,26 +73,40 @@ public class CustomerServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         System.out.println("Get method called in customer");
+
         String customerId = req.getParameter("id");
-        System.out.println("Customer Id from frontend: " + customerId);
+        if (customerId != null && !customerId.isEmpty()) {
+            // Get specific customer by ID
+            CustomerDTO customerDTO = customerService.search(customerId);
 
-        // Assuming you have a method in your CustomerService to retrieve customer data by ID
-        CustomerDTO customerDTO = customerService.search(customerId);
+            // Convert the CustomerDTO object to a JSON object
+            JsonObject customerJson = Json.createObjectBuilder()
+                    .add("id", customerDTO.getId())
+                    .add("name", customerDTO.getName())
+                    .add("address", customerDTO.getAddress())
+                    .add("salary", customerDTO.getSalary())
+                    .build();
 
-        // Convert the CustomerDTO object to a JSON object
-        JsonObject customerJson = Json.createObjectBuilder()
-                .add("id", customerDTO.getId())
-                .add("name", customerDTO.getName())
-                .add("address", customerDTO.getAddress())
-                .add("salary", customerDTO.getSalary())
-                .build();
+            // Set the content type to indicate JSON data
+            resp.setContentType("application/json");
 
-        // Set the content type to indicate JSON data
-        resp.setContentType("application/json");
+            // Write the JSON data to the response output stream
+            try (PrintWriter out = resp.getWriter()) {
+                out.print(customerJson.toString());
+            }
+        } else {
+            // Get all customers
+            List<CustomerDTO> allCustomers = customerService.getAll();
+            Gson gson = new Gson();
+            String json = gson.toJson(allCustomers);
 
-        // Write the JSON data to the response output stream
-        try (PrintWriter out = resp.getWriter()) {
-            out.print(customerJson.toString());
+            // Set the content type to indicate JSON data
+            resp.setContentType("application/json");
+
+            // Write the JSON data to the response output stream
+            try (PrintWriter out = resp.getWriter()) {
+                out.print(json);
+            }
         }
     }
 
